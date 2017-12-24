@@ -1,8 +1,11 @@
 #pragma once
 
 #include "core.hpp"
+#include "upload_source.hpp"
 
 #include <string>
+#include <functional>
+#include <memory>
 
 namespace attendee
 {
@@ -16,6 +19,11 @@ namespace attendee
         request();
         ~request();
 
+        request(request const&) = delete;
+        request(request&&) = default;
+        request& operator=(request const&) = delete;
+        request& operator=(request&&) = default;
+
         /**
          *  Adds a basic authentication header field.
          *
@@ -27,7 +35,7 @@ namespace attendee
 
         /**
          *  Set the Accept-Encoding header. Curl will handle simple compressions automatically.
-         *  @param encoding identity (non-compressed), deflate (zlib), gzip (gzip), "" (all supported by curl)
+         *  @param encoding "identity" (non-compressed), "deflate" (zlib), "gzip" (gzip), "" (all supported by curl)
          */
         request& accept_encoding(std::string const& encoding);
 
@@ -60,7 +68,78 @@ namespace attendee
          */
         request& forward_auth(bool forward = true);
 
+        /**
+         *  Perform a get request on the URL.
+         */
+        request& get(std::string const& url);
+
+        /**
+         *  Setup a sink for get requests.
+         *  @param sink_fn A function that gets called each time a piece of data is digestable.
+         */
+        request& sink(std::function <void(char*, std::size_t)> const& sink_fn);
+
+        /**
+         *  Finalizes everything and launches request.
+         *  Returns the error as a curl error.
+         */
+        CURLcode perform();
+
+        /**
+         *  Pass cookies as a string. This sets the cookie header. Cannot be repeated and instead
+         *  overwrites last call.
+         */
+        request& cookie_string(std::string const& cookies);
+
+        /**
+         *  Pass a CURL cookie file. This is READ-ONLY. Please read the curl documentation for warnings and security,
+         *  because cookies will be passed to redirects etc.
+         *  @see https://curl.haxx.se/libcurl/c/CURLOPT_COOKIEFILE.html
+         */
+        request& cookies(std::string const& cookie_file);
+
+        /**
+         *  @see https://curl.haxx.se/libcurl/c/CURLOPT_COOKIEJAR.html
+         */
+        request& cookie_jar(std::string const& cookie_jar);
+
+        /**
+         *  When you want to upload data, you will have to provide data to upload somehow.
+         *  Derive from upload_source to make a data provider of your own, or use one of the standard ones.
+         *  @warning usource must be kept alive for as long as the request is running.
+         */
+        template <typename SourceT, typename... Args>
+        request& make_source(Args&&... args)
+        {
+            source_ = std::make_unique <SourceT>(std::forward <Args>(args)...);
+            set_source();
+            return *this;
+        }
+
+        /**
+         *  Throttle download in byte per second
+         */
+        request& throttle_download(unsigned long long bytes_per_second);
+
+        /**
+         *  Set the method to put on url.
+         */
+        request& put(std::string const& url);
+
+    private:
+        /**
+         *  curlopt set url.
+         */
+        void set_url(std::string const& url);
+
+        /**
+         *  curl calls.
+         */
+        void set_source();
+
     private:
         CURL* instance_;
+        std::function <void(char*, std::size_t)> sink_;
+        std::unique_ptr <upload_source> source_;
     };
 }
