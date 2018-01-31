@@ -1,5 +1,7 @@
 #pragma once
 
+#include "forward.hpp"
+
 #include <curl/curl.h>
 
 namespace attendee

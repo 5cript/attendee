@@ -76,13 +76,35 @@ namespace attendee
 //---------------------------------------------------------------------------------------------------------------------
     request& request::get(std::string const& url)
     {
-        set_url(url);
+        this->url(url);
         return *this;
     }
 //---------------------------------------------------------------------------------------------------------------------
-    void request::set_url(std::string const& url)
+    std::string request::url_encode(std::string const& url)
+    {
+        CURL *curl = curl_easy_init();
+        std::string encoded;
+        auto* escaped = curl_easy_escape(curl, url.c_str(), url.length());
+        if (escaped != nullptr)
+        {
+            encoded = escaped;
+            curl_free(escaped);
+        }
+        curl_easy_cleanup(curl);
+        return encoded;
+    }
+//---------------------------------------------------------------------------------------------------------------------
+    request& request::url(std::string const& url)
     {
         curl_easy_setopt(instance_, CURLOPT_URL, url.c_str());
+
+        return *this;
+    }
+//---------------------------------------------------------------------------------------------------------------------
+    request& request::verb(std::string const& verb)
+    {
+        curl_easy_setopt(instance_, CURLOPT_CUSTOMREQUEST, verb.c_str());
+        return *this;
     }
 //---------------------------------------------------------------------------------------------------------------------
     request& request::sink(std::function <void(char*, std::size_t)> const& sink_fn)
@@ -91,6 +113,16 @@ namespace attendee
         curl_easy_setopt(instance_, CURLOPT_WRITEDATA, &sink_);
         curl_easy_setopt(instance_, CURLOPT_WRITEFUNCTION, generic_write_funciton);
         return *this;
+    }
+//---------------------------------------------------------------------------------------------------------------------
+    request& request::sink(std::string& str)
+    {
+        sink_ = [&str](char* data, std::size_t count)
+        {
+            str += std::string{data, count};
+        };
+
+        return sink(sink_);
     }
 //---------------------------------------------------------------------------------------------------------------------
     request& request::cookie_string(std::string const& cookies)
@@ -111,9 +143,15 @@ namespace attendee
         return *this;
     }
 //---------------------------------------------------------------------------------------------------------------------
-    CURLcode request::perform()
+    response request::perform()
     {
-        return curl_easy_perform(instance_);
+        auto code = curl_easy_perform(instance_);
+        return {this, code};
+    }
+//---------------------------------------------------------------------------------------------------------------------
+    CURL* request::handle()
+    {
+        return instance_;
     }
 //---------------------------------------------------------------------------------------------------------------------
     void request::set_source()
@@ -126,8 +164,15 @@ namespace attendee
 //---------------------------------------------------------------------------------------------------------------------
     request& request::put(std::string const& url)
     {
+        this->url(url);
         curl_easy_setopt(instance_, CURLOPT_PUT, 1L);
-        curl_easy_setopt(instance_, CURLOPT_URL, url.c_str());
+        return *this;
+    }
+//---------------------------------------------------------------------------------------------------------------------
+    request& request::post(std::string const& url)
+    {
+        this->url(url);
+        curl_easy_setopt(instance_, CURLOPT_POST, 1L);
         return *this;
     }
 //---------------------------------------------------------------------------------------------------------------------

@@ -2,6 +2,7 @@
 
 #include "core.hpp"
 #include "upload_source.hpp"
+#include "response.hpp"
 
 #include <string>
 #include <functional>
@@ -70,6 +71,9 @@ namespace attendee
 
         /**
          *  Perform a get request on the URL.
+         *
+         *  @param url The url to get from.
+         *  @param auto_encode use curls url encoder on url string for special characters.
          */
         request& get(std::string const& url);
 
@@ -80,10 +84,21 @@ namespace attendee
         request& sink(std::function <void(char*, std::size_t)> const& sink_fn);
 
         /**
+         *  Setup a sink for get requests.
+         *  @param sink_fn A string that gets appended every time data arrives.
+         */
+        request& sink(std::string& str);
+
+        /**
+         *  Sets CURLOPT_CUSTOMREQUEST, used for other less common http verbs (DELETE, ...).
+         */
+        request& verb(std::string const& verb);
+
+        /**
          *  Finalizes everything and launches request.
          *  Returns the error as a curl error.
          */
-        CURLcode perform();
+        response perform();
 
         /**
          *  Pass cookies as a string. This sets the cookie header. Cannot be repeated and instead
@@ -123,14 +138,37 @@ namespace attendee
 
         /**
          *  Set the method to put on url.
+         *
+         *  @param url The url to put to.
+         *  @param auto_encode use curls url encoder on url string for special characters.
          */
         request& put(std::string const& url);
 
-    private:
+        /**
+         *  Set the method to post on url.
+         *
+         *  @param url The url to post to.
+         *  @param auto_encode use curls url encoder on url string for special characters.
+         */
+        request& post(std::string const& url);
+
+        /**
+         *  Retrieve the handle to the curl instance. Try not to use, if there are implemented alternatives.
+         *  No guarantees can be made after a curl instance has been altered for the other functions to do their work
+         *  properly.
+         */
+        CURL* handle();
+
+        /**
+         *  Encodes url (" " -> "%20")
+         */
+        static std::string url_encode(std::string const& url);
+
         /**
          *  curlopt set url.
          */
-        void set_url(std::string const& url);
+        request& url(std::string const& url);
+    private:
 
         /**
          *  curl calls.

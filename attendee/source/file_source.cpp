@@ -6,13 +6,12 @@ namespace attendee
     file_source::file_source(std::string const& filename)
         : reader_{filename, std::ios_base::binary}
     {
+        if (!reader_.good())
+            throw std::runtime_error("could not open file source.");
     }
 //---------------------------------------------------------------------------------------------------------------------
     std::size_t file_source::fetch(char* buffer, std::size_t amount)
     {
-        if (!reader_.good())
-            return 0;
-
         reader_.read(buffer, amount);
         return reader_.gcount();
     }

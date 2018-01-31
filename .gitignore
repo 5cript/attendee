@@ -2,6 +2,7 @@
 *.depend
 *.layout
 *_log.html
+build/*
 bin/*
 obj/*
 main.cpp
