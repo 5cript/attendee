@@ -145,12 +145,12 @@ namespace attendee
         request& put(std::string const& url);
 
         /**
-         *  Set the method to post on url.
+         *  Set the method to post on url. Use this after setting a sink or use chunked encoding.
          *
          *  @param url The url to post to.
          *  @param auto_encode use curls url encoder on url string for special characters.
          */
-        request& post(std::string const& url);
+        request& post(std::string const& url, bool useChunked = false);
 
         /**
          *  Retrieve the handle to the curl instance. Try not to use, if there are implemented alternatives.
@@ -168,6 +168,11 @@ namespace attendee
          *  curlopt set url.
          */
         request& url(std::string const& url);
+
+        /**
+         *  Make curl print verbose information.
+         */
+        request& verbose();
     private:
 
         /**

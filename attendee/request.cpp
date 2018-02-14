@@ -23,6 +23,12 @@ namespace attendee
             BOOST_THROW_EXCEPTION(init_curl_error{"initializing a curl instance failed."});
     }
 //---------------------------------------------------------------------------------------------------------------------
+    request& request::verbose()
+    {
+        curl_easy_setopt(instance_, CURLOPT_VERBOSE, 1L);
+        return *this;
+    }
+//---------------------------------------------------------------------------------------------------------------------
     request::~request()
     {
         if (instance_)
@@ -156,7 +162,6 @@ namespace attendee
 //---------------------------------------------------------------------------------------------------------------------
     void request::set_source()
     {
-        curl_easy_setopt(instance_, CURLOPT_UPLOAD, 1L);
         curl_easy_setopt(instance_, CURLOPT_READDATA, source_.get());
         curl_easy_setopt(instance_, CURLOPT_READFUNCTION, generic_read_function);
         curl_easy_setopt(instance_, CURLOPT_INFILESIZE_LARGE, source_->size());
@@ -165,14 +170,16 @@ namespace attendee
     request& request::put(std::string const& url)
     {
         this->url(url);
-        curl_easy_setopt(instance_, CURLOPT_PUT, 1L);
+        curl_easy_setopt(instance_, CURLOPT_UPLOAD, 1L);
         return *this;
     }
 //---------------------------------------------------------------------------------------------------------------------
-    request& request::post(std::string const& url)
+    request& request::post(std::string const& url, bool useChunked)
     {
         this->url(url);
         curl_easy_setopt(instance_, CURLOPT_POST, 1L);
+        if (!useChunked && source_)
+            curl_easy_setopt(instance_, CURLOPT_POSTFIELDSIZE_LARGE, source_->size());
         return *this;
     }
 //---------------------------------------------------------------------------------------------------------------------
