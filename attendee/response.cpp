@@ -21,6 +21,42 @@ namespace attendee
         return {this};
     }
 //---------------------------------------------------------------------------------------------------------------------
+    std::string response::redirect_url() const
+    {
+        char* url;
+        auto res = curl_easy_getinfo(parent_->handle(), CURLINFO_REDIRECT_URL, &url);
+        if (res == CURLE_OK && url)
+            return {url};
+        return {};
+    }
+//---------------------------------------------------------------------------------------------------------------------
+    long long response::size_downloaded() const
+    {
+        curl_off_t dl;
+        auto res = curl_easy_getinfo(parent_->handle(), CURLINFO_SIZE_DOWNLOAD_T, &dl);
+        if (res == CURLE_OK)
+            return static_cast <long long> (dl);
+        return 0;
+    }
+//---------------------------------------------------------------------------------------------------------------------
+    long long response::size_uploaded() const
+    {
+        curl_off_t ul;
+        auto res = curl_easy_getinfo(parent_->handle(), CURLINFO_SIZE_UPLOAD_T, &ul);
+        if (res == CURLE_OK)
+            return static_cast <long long> (ul);
+        return 0;
+    }
+//---------------------------------------------------------------------------------------------------------------------
+    int response::code() const
+    {
+        int code;
+        auto res = curl_easy_getinfo(parent_->handle(), CURLINFO_RESPONSE_CODE, &code);
+        if (res == CURLE_OK)
+            return code;
+        return 0;
+    }
+//---------------------------------------------------------------------------------------------------------------------
     CURLcode response::result() const
     {
         return result_;

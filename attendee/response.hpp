@@ -28,9 +28,29 @@ namespace attendee
         CURLcode result() const;
 
         /**
+         *  Returns the url curl would have redirected to, if it were enabled
+         */
+        std::string redirect_url() const;
+
+        /**
+         *  Returns the amount of bytes downloaded
+         */
+        long long size_downloaded() const;
+
+        /**
+         *  Returns the amount of bytes uploaded
+         */
+        long long size_uploaded() const;
+
+        /**
          *  Prepares cookie retrieval and returns range.
          */
         cookie_proxy cookies();
+
+        /**
+         *  Returns the server response code
+         */
+        int code() const;
 
     public:
         ~response() = default;
