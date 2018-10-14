@@ -1,28 +1,19 @@
 # Version check
 cmake_minimum_required (VERSION 3.0)
 
-# Project
-project(attendee)
+if(NOT "${CMAKE_CXX_STANDARD}")
+	set(CMAKE_CXX_STANDARD 17)
+endif()
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-function(add_cxx_compiler_flag FLAG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${FLAG}" PARENT_SCOPE)
-endfunction()
-
-if (NOT DEFINED CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE Release)
+if (NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
+  if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
+  endif()
 endif()
 
-# Compiler Options
-add_cxx_compiler_flag("-std=c++14")
-add_cxx_compiler_flag("-Wall")
-add_cxx_compiler_flag("-Wall")
-add_cxx_compiler_flag("-Wextra")
-add_cxx_compiler_flag("-pedantic")
-add_cxx_compiler_flag("-pedantic-errors")
-add_cxx_compiler_flag("-Wfloat-equal")
-add_cxx_compiler_flag("-fstrict-aliasing")
-add_cxx_compiler_flag("-Wstrict-aliasing")
-add_cxx_compiler_flag("-O3")
+# Project
+project(attendee)
 
 # Add files
 file(GLOB_RECURSE sources "attendee/*.cpp" "attendee/source/*.cpp")
@@ -48,3 +39,9 @@ else()
 endif()
 
 target_link_libraries(attendee PRIVATE "${LIBS}")
+
+# Compiler Options
+set(DEBUG_OPTIONS -fexceptions -g -Wall -pedantic-errors -pedantic -Wfloat-equal -fstrict-aliasing -Wstrict-aliasing)
+set(RELEASE_OPTIONS -fexceptions -O3 -Wall -pedantic-errors -pedantic -fstrict-aliasing -Wstrict-aliasing)
+target_compile_options(attendee PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")
+target_compile_options(attendee PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")
