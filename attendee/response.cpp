@@ -57,6 +57,21 @@ namespace attendee
         return 0;
     }
 //---------------------------------------------------------------------------------------------------------------------
+    std::string response::url_decode(std::string const& url)
+    {
+        CURL *curl = curl_easy_init();
+        std::string decoded;
+        int actual = 0;
+        auto* dec = curl_easy_unescape(curl, url.c_str(), url.length(), &actual);
+        if (dec != nullptr)
+        {
+            decoded = std::string{dec, dec + actual};
+            curl_free(dec);
+        }
+        curl_easy_cleanup(curl);
+        return decoded;
+    }
+//---------------------------------------------------------------------------------------------------------------------
     CURLcode response::result() const
     {
         return result_;

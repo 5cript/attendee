@@ -52,6 +52,11 @@ namespace attendee
          */
         int code() const;
 
+        /**
+         *  decodes a url.
+         */
+        static std::string url_decode(std::string const& url);
+
     public:
         ~response() = default;
 

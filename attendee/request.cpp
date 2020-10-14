@@ -188,5 +188,11 @@ namespace attendee
         curl_easy_setopt(instance_, CURLOPT_MAX_RECV_SPEED_LARGE, bytes_per_second);
         return *this;
     }
+//---------------------------------------------------------------------------------------------------------------------
+    request& request::verify_peer(bool verify)
+    {
+        curl_easy_setopt(instance_, CURLOPT_SSL_VERIFYPEER, verify ? 1L : 0L);
+        return *this;
+    }
 //#####################################################################################################################
 }

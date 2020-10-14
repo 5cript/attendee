@@ -70,6 +70,12 @@ namespace attendee
         request& forward_auth(bool forward = true);
 
         /**
+         *  Shall ssl peers be verified?
+         *  CURLOPT_SSL_VERIFYPEER
+         */
+        request& verify_peer(bool verify = true);
+
+        /**
          *  Perform a get request on the URL.
          *
          *  @param url The url to get from.
