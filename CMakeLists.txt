@@ -29,13 +29,13 @@ add_library(attendee STATIC
 	"source/attendee/sources/string_source.cpp"
 )
 
-find_library(LCURL curl)
+find_package(CURL REQUIRED)
 
-set(LIBS "${LCURL}")
+target_link_libraries(attendee PUBLIC CURL::libcurl)
 
 # MS SOCK
 if (WIN32)	
-	set(LIBS "${LIBS} -lws2_32 -lmswsock")
+	target_link_libraries(attendee PRIVATE -lws2_32 -lmswsock)
 	
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 		target_compile_definitions(attendee PRIVATE BOOST_USE_WINDOWS_H=1)
@@ -44,8 +44,6 @@ else()
 endif()
 
 target_include_directories(attendee PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
-
-target_link_libraries(attendee PRIVATE "${LIBS}")
 
 # Compiler Options
 set(DEBUG_OPTIONS -fexceptions -g -Wall -pedantic-errors -pedantic -Wfloat-equal -fstrict-aliasing -Wstrict-aliasing)
