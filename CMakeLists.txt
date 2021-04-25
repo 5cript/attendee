@@ -15,11 +15,19 @@ endif()
 # Project
 project(attendee)
 
-# Add files
-file(GLOB_RECURSE sources "${CMAKE_CURRENT_SOURCE_DIR}/source/attendee/*.cpp")
-
 # Add library
-add_library(attendee STATIC ${sources})
+add_library(attendee STATIC 
+	"source/attendee/ssl.cpp"
+	"source/attendee/response.cpp"
+	"source/attendee/request.cpp"
+	"source/attendee/core.cpp"
+	"source/attendee/cookie.cpp"
+	"source/attendee/cookie_proxy.cpp"
+	"source/attendee/cookie_iterator.cpp"
+	"source/attendee/sources/file_source.cpp"
+	"source/attendee/sources/stream_source.cpp"
+	"source/attendee/sources/string_source.cpp"
+)
 
 find_library(LCURL curl)
 
