@@ -41,6 +41,11 @@ namespace attendee
         request& accept_encoding(std::string const& encoding);
 
         /**
+         *  Set a custom header field. 
+         */
+        request& set_header_fields(std::vector<std::pair <std::string /*key*/, std::string /*value*/>> const& fields);
+
+        /**
          *  When enabled, libcurl will automatically set the Referer:
          *  header field in HTTP requests where it follows a Location: redirect.
          */

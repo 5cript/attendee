@@ -107,6 +107,18 @@ namespace attendee
         return *this;
     }
 //---------------------------------------------------------------------------------------------------------------------
+    request& request::set_header_fields(std::vector<std::pair <std::string /*key*/, std::string /*value*/>> const& fields)
+    {
+        struct curl_slist* list = nullptr;
+        for (auto const& [key, value] : fields)
+        {
+            const auto combined = key + ": " + value;
+            list = curl_slist_append(list, combined.c_str());
+        }
+        curl_easy_setopt(instance_, CURLOPT_HTTPHEADER, list);
+        return *this;
+    }
+//---------------------------------------------------------------------------------------------------------------------
     request& request::verb(std::string const& verb)
     {
         curl_easy_setopt(instance_, CURLOPT_CUSTOMREQUEST, verb.c_str());
