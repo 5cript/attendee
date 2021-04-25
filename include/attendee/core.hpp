@@ -1,6 +1,6 @@
 #pragma once
 
-#include "forward.hpp"
+#include <attendee/forward.hpp>
 
 #include <curl/curl.h>
 

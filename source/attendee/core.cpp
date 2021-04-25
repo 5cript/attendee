@@ -1,4 +1,4 @@
-#include "core.hpp"
+#include <attendee/core.hpp>
 
 namespace attendee
 {

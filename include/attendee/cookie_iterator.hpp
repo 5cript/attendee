@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core.hpp"
-#include "cookie.hpp"
+#include <attendee/core.hpp>
+#include <attendee/cookie.hpp>
 
 #include <memory>
 #include <iterator>

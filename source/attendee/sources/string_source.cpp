@@ -1,4 +1,4 @@
-#include "string_source.hpp"
+#include <attendee/sources/string_source.hpp>
 
 #include <algorithm>
 

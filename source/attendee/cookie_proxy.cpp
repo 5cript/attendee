@@ -1,5 +1,5 @@
-#include "cookie_proxy.hpp"
-#include "response.hpp"
+#include <attendee/cookie_proxy.hpp>
+#include <attendee/response.hpp>
 
 namespace attendee
 {

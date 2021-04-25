@@ -1,6 +1,6 @@
-#include "request.hpp"
+#include <attendee/request.hpp>
 
-#include "exception.hpp"
+#include <attendee/exception.hpp>
 
 namespace attendee
 {

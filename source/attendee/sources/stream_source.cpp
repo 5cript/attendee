@@ -1,4 +1,4 @@
-#include "stream_source.hpp"
+#include <attendee/sources/stream_source.hpp>
 
 namespace attendee
 {

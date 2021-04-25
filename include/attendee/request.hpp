@@ -1,8 +1,8 @@
 #pragma once
 
-#include "core.hpp"
-#include "upload_source.hpp"
-#include "response.hpp"
+#include <attendee/core.hpp>
+#include <attendee/upload_source.hpp>
+#include <attendee/response.hpp>
 
 #include <string>
 #include <functional>

@@ -1,5 +1,5 @@
-#include "response.hpp"
-#include "request.hpp"
+#include <attendee/response.hpp>
+#include <attendee/request.hpp>
 
 namespace attendee
 {

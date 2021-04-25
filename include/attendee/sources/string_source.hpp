@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../upload_source.hpp"
+#include <attendee/upload_source.hpp>
 
 #include <string>
 

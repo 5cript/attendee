@@ -1,7 +1,7 @@
 #pragma once
 
-#include "forward.hpp"
-#include "cookie_proxy.hpp"
+#include <attendee/forward.hpp>
+#include <attendee/cookie_proxy.hpp>
 
 #include <memory>
 

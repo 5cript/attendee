@@ -16,7 +16,7 @@ endif()
 project(attendee)
 
 # Add files
-file(GLOB_RECURSE sources "attendee/*.cpp" "attendee/source/*.cpp")
+file(GLOB_RECURSE sources "${CMAKE_CURRENT_SOURCE_DIR}/source/attendee/*.cpp")
 
 # Add library
 add_library(attendee STATIC ${sources})
@@ -26,17 +26,16 @@ find_library(LCURL curl)
 set(LIBS "${LCURL}")
 
 # MS SOCK
-if (WIN32)
-	find_library(LWS2_32 ws2_32)
-	find_library(LMSWSOCK mswsock)
-	
-	set(LIBS "${LIBS} ${LWS2_32} ${LMSWSOCK}")
+if (WIN32)	
+	set(LIBS "${LIBS} -lws2_32 -lmswsock")
 	
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 		target_compile_definitions(attendee PRIVATE BOOST_USE_WINDOWS_H=1)
 	endif()
 else()
 endif()
+
+target_include_directories(attendee PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 
 target_link_libraries(attendee PRIVATE "${LIBS}")
 
